@@ -1,6 +1,6 @@
-SHELL := /bin/bash
+SHELL:=/bin/bash
 SGBD=psql
-USER=gduarte
+USER=postgres
 DB_NAME=compras_publicas
 TABLES_FOLDER=tables
 QUERIES_FOLDER=queries
@@ -13,15 +13,21 @@ all: setup
 
 setup: 
 	@if $(SGBD) -lqt | cut -d \| -f 1 | grep -wq $(DB_NAME); then \
-		echo "Data Base '$(DB_NAME)' exists!"; \
+		echo "Data Base '$(DB_NAME)' does exist!"; \
 	else \
-		echo "Data Base '$(DB_NAME)' does not exists! Creating..."; \
+		echo "Data Base '$(DB_NAME)' does not exist! Creating..."; \
 		createdb -U $(USER) $(DB_NAME); \
 	fi
 	@echo "Initializing files insertion..."
 	@for file in $(SQL_FILES); do \
-		echo "executing $$file"; \
-		$(SGBD) -U $(USER) -d $(DB_NAME) -f $$file || exit 1; \
+		no_prefix=$${file#*_}; \
+		final_name=$${no_prefix%.*}; \
+		if $(SGBD) -U $(USER) -d $(DB_NAME) -c '\dt' | cut -d \| -f 2 | grep -qi $$final_name; then \
+			echo " Schema '$$final_name' already exists."; \
+		else \
+			echo "executing $$file"; \
+			$(SGBD) -U $(USER) -d $(DB_NAME) -f $$file || exit 1; \
+		fi; \
 	done
 	@echo "Processing completed successfully."
 
@@ -43,7 +49,8 @@ execute_query:
 			echo "$$counter. $${query#$(QUERIES_FOLDER)/}"; \
 			((counter++)); \
 		done; \
-		echo "0. Sair"; \
+		echo "999. Clear Terminal"; \
+		echo "0. Exit"; \
 		echo "-------------------------------"; \
 	}; \
 	while true; do \
@@ -53,6 +60,10 @@ execute_query:
 			echo "Exiting..."; \
 			break; \
 		fi; \
+		if [[ $$opt = 999 ]]; then \
+			clear; \
+			continue; \
+		fi; \
 		if [[ $$opt -lt 1 || $$opt -gt $${#queries[@]} ]]; then \
 			echo "Invalid Option Try again."; \
 			continue; \
@@ -60,13 +71,9 @@ execute_query:
 		index=$$((opt -1)); \
 		target_file=$${queries[$$index]}; \
 		echo "Executing $${target_file#$(QUERIES_FOLDER)/}..."; \
-		echo "--------------------------------------------------"; \
+		echo "-------------------------------"; \
 		$(SGBD) -U $(USER) -d $(DB_NAME) -f $$target_file; \
-		echo "--------------------------------------------------"; \
-		read -p "Continue? (y/n) " confirm; \
-		if [[ ! $$confirm =~ ^[Yy]$$ ]]; then \
-			break; \
-		fi; \
+		echo "-------------------------------"; \
 	done 
 
 clean: 
