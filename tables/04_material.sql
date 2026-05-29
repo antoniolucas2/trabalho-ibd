@@ -1,4 +1,4 @@
-CREATE TABLE Material (
+CREATE TABLE IF NOT EXISTS Material (
     codigo_item INT PRIMARY KEY,
     nome_material VARCHAR(100),
     descricao_item VARCHAR (500),

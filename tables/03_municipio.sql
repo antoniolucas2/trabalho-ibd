@@ -1,4 +1,4 @@
-CREATE TABLE Municipio (
+CREATE TABLE IF NOT EXISTS Municipio (
     codigo_ibge INT PRIMARY KEY,
     nome_municipio VARCHAR(100) NOT NULL,
     sigla_uf CHAR(2) NOT NULL,

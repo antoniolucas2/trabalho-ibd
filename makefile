@@ -22,7 +22,8 @@ setup:
 	@for file in $(SQL_FILES); do \
 		no_prefix=$${file#*_}; \
 		final_name=$${no_prefix%.*}; \
-		if $(SGBD) -U $(USER) -d $(DB_NAME) -c '\dt' | cut -d \| -f 2 | grep -qi $$final_name; then \
+		echo "TABLE NAME: $$final_name"; \
+		if $(SGBD) -U $(USER) -d $(DB_NAME) -c '\dt' | cut -d \| -f 2 | grep -wqi $$final_name; then \
 			echo " Schema '$$final_name' already exists."; \
 		else \
 			echo "executing $$file"; \

@@ -1,4 +1,4 @@
-CREATE TABLE Classe (
+CREATE TABLE IF NOT EXISTS Classe (
     codigo_classe INT PRIMARY KEY,
     nome_classe VARCHAR(100) NOT NULL,
     codigo_grupo INT NOT NULL,

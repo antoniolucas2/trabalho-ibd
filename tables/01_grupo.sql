@@ -1,4 +1,4 @@
-CREATE TABLE Grupo (
+CREATE TABLE IF NOT EXISTS Grupo (
     codigo_grupo INT PRIMARY KEY,
     nome_grupo VARCHAR(100) NOT NULL,
     tipo_item VARCHAR(20) NOT NULL,
