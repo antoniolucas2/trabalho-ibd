@@ -4,7 +4,7 @@ USER=postgres
 DB_NAME=compras_publicas
 TABLES_FOLDER=tables
 QUERIES_FOLDER=queries
-POPULATE_FOLDER=populate
+POPULATE_FOLDER=populate1
 SQL_FILES = $(shell find $(TABLES_FOLDER) -name '*.sql' | sort)
 QUERIES_FILES = $(shell find $(QUERIES_FOLDER) -name '*.sql' | sort)
 POPULATE_FILES = $(shell find $(POPULATE_FOLDER) -name '*.sql' | sort)
@@ -22,7 +22,7 @@ setup:
 	@for file in $(SQL_FILES); do \
 		no_prefix=$${file#*_}; \
 		final_name=$${no_prefix%.*}; \
-		echo "TABLE NAME: $$final_name"; \
+		echo "Tyring to create TABLE: $$final_name"; \
 		if $(SGBD) -U $(USER) -d $(DB_NAME) -c '\dt' | cut -d \| -f 2 | grep -wqi $$final_name; then \
 			echo " Schema '$$final_name' already exists."; \
 		else \
