@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS TipoADM(
+    codigo_adm INT PRIMARY KEY,
+    nome_adm VARCHAR(200)
+);
