@@ -1,21 +1,22 @@
 SHELL:=/bin/bash
 SGBD=psql
-USER=postgres
 DB_NAME=compras_publicas
 TABLES_FOLDER=tables
 QUERIES_FOLDER=queries
-POPULATE_FOLDER=populate1
 SQL_FILES = $(shell find $(TABLES_FOLDER) -name '*.sql' | sort)
 QUERIES_FILES = $(shell find $(QUERIES_FOLDER) -name '*.sql' | sort)
-POPULATE_FILES = $(shell find $(POPULATE_FOLDER) -name '*.sql' | sort)
+POPULATE_SCRIPT=./scripts/injection_populate.py
+DUMP_FILE=./scripts/data_base_dump.sql
 
 all: setup
 
+USER := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+
 setup: 
 	@if $(SGBD) -lqt | cut -d \| -f 1 | grep -wq $(DB_NAME); then \
-		echo "Data Base '$(DB_NAME)' does exist!"; \
+		echo "Data Base '$(DB_NAME)' already exists!"; \
 	else \
-		echo "Data Base '$(DB_NAME)' does not exist! Creating..."; \
+		echo "Data Base '$(DB_NAME)' does not exist! Creating data base..."; \
 		createdb -U $(USER) $(DB_NAME); \
 	fi
 	@echo "Initializing files insertion..."
@@ -32,13 +33,18 @@ setup:
 	done
 	@echo "Processing completed successfully."
 
+ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+
 populate:
-	@echo "Populating Data Base $(DB_NAME)"
-	@for file in $(POPULATE_FILES); do \
-		echo "executing $$file"; \
-		$(SGBD) -U $(USER) -d $(DB_NAME) -f $$file || exit 1; \
-	done
-	@echo "Populating completed successfully."
+	@if [ "$(ARGS)" = "help" ]; then \
+		echo -e "Program Usage: \nmake populate <data_base_name> <user_name> <password>"; \
+	else \
+		echo "Populating Data Base $(DB_NAME)"; \
+		python3 $(POPULATE_SCRIPT) $(ARGS); \
+	fi
+
+%::
+	@true
 
 execute_query:
 	@echo "Execute Query:"
@@ -75,10 +81,14 @@ execute_query:
 		echo "-------------------------------"; \
 		$(SGBD) -U $(USER) -d $(DB_NAME) -f $$target_file; \
 		echo "-------------------------------"; \
-	done 
+	done
+
+generate_dump_file:
+	@echo "Generating dump file..."
+	@pg_dump -U $(USER) -d $(DB_NAME) -O -f $(DUMP_FILE)
 
 clean: 
 	@psql -U $(USER) -d $(DB_NAME) -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
 	@echo "Schema cleaned."
 
-.PHONY: all setup populate clean execute_query
+.PHONY: all setup populate clean execute_query generate_dump_file
