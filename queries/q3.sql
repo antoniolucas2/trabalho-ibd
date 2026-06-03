@@ -10,8 +10,8 @@ WITH MunLic AS (
 )
 SELECT ML.codigo_ibge, ML.nome_municipio,
        ML.populacao, COUNT(ML.id_compra) AS qnt_licitacao, 
-           (ROUND( COUNT(ML.id_compra) / (ML.populacao)::NUMERIC , 5)) AS taxa
+           (ROUND( COUNT(ML.id_compra) / (ML.populacao)::NUMERIC , 5)) * 100 AS "taxa %"
 FROM MunLic AS ML
 GROUP BY ML.codigo_ibge, ML.nome_municipio, ML.populacao
-ORDER BY taxa DESC
-LIMIT 10;
+ORDER BY "taxa %" DESC
+LIMIT 30;

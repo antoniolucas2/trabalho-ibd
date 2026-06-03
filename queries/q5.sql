@@ -3,6 +3,11 @@
     aos quais eles ainda estao atrelados.
 */
 
+/*
+Sera removida; fornecedor nao tem mais o atributo habilitado_licitar
+*/
+
+/*
 WITH FornNaoAptos AS (
     SELECT F.nome_razao_social, U.codigo_orgao, F.id_fornecedor, U.codigo_uasg
     FROM Fornecedor AS F
@@ -13,4 +18,4 @@ WITH FornNaoAptos AS (
 SELECT FNA.nome_razao_social, O.nome_orgao
 FROM Orgao AS O
 INNER JOIN FornNaoAptos AS FNA ON O.codigo_orgao = FNA.codigo_orgao; 
-
+*/
