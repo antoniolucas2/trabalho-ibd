@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Classe (
     codigo_classe INT PRIMARY KEY,
-    nome_classe VARCHAR(100) NOT NULL,
+    nome_classe VARCHAR(300),
     codigo_grupo INT NOT NULL,
 
     CONSTRAINT fkcodigo_grupo 

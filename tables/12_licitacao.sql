@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS Licitacao(
     id_compra VARCHAR(50) PRIMARY KEY,
-    uasg INT NOT NULL,
+    uasg CHAR(6) NOT NULL,
     codigo_municipio INT,
     codigo_modalidade INT,
     numero_licitacao INT,
     nome_responsavel VARCHAR(100),
     numero_itens INT,
-    valor_homologado_total DECIMAL(15, 2),
+    valor_total DECIMAL(15, 2),
     data_publicacao DATE,
 
     CONSTRAINT fk_codigo_municipio
@@ -27,6 +27,6 @@ CREATE TABLE IF NOT EXISTS Licitacao(
     ON UPDATE CASCADE
     ON DELETE RESTRICT,
 
-    CONSTRAINT domain_valor_homo_total 
-    CHECK (valor_homologado_total > 0)
+    CONSTRAINT domain_valor_total 
+    CHECK (valor_total >= 0)
 );

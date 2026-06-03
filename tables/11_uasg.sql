@@ -1,9 +1,8 @@
 CREATE TABLE IF NOT EXISTS Uasg (
-    codigo_uasg INT PRIMARY KEY,
+    codigo_uasg CHAR(6) PRIMARY KEY,
     nome_uasg VARCHAR(200) NOT NULL,
     codigo_orgao INT NOT NULL,
     codigo_municipio INT,
-    status BOOLEAN,
     
     CONSTRAINT fk_orgao 
     FOREIGN KEY (codigo_orgao) 

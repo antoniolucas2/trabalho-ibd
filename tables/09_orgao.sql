@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS Orgao(
     codigo_orgao INT PRIMARY KEY,
     nome_orgao VARCHAR(200),
-    codigo_municipio INT NOT NULL,
+    codigo_municipio INT,
     codigo_orgao_superior INT,
     codigo_adm INT,
     poder VARCHAR(25),

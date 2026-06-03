@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS FornecedorUasg(
-    id_fornecedor INT NOT NULL,
-    uasg INT NOT NULL,
-    PRIMARY KEY (id_fornecedor, uasg),
+    cnpj_fornecedor CHAR(14) NOT NULL,
+    uasg CHAR(6) NOT NULL,
+    PRIMARY KEY (cnpj_fornecedor, uasg),
 
     CONSTRAINT fk_fornecedor 
-    FOREIGN KEY (id_fornecedor) 
-    REFERENCES Fornecedor(id_fornecedor)
+    FOREIGN KEY (cnpj_fornecedor) 
+    REFERENCES Fornecedor(cnpj)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
 

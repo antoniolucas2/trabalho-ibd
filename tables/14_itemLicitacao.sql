@@ -2,13 +2,15 @@ CREATE TABLE IF NOT EXISTS ItemLicitacao(
     id_compra_item VARCHAR(50) PRIMARY KEY,
     id_compra VARCHAR(50) NOT NULL,
     numero_item_licitacao INT,
-    uasg INT,
+    uasg CHAR(6),
     criterio_julgamento VARCHAR(50),
     codigo_item_material INT, 
     codigo_item_servico INT,
     quantidade INT,
-    valor_estimado DECIMAL(10, 2),
-    id_fornecedor INT NOT NULL,
+    valor_estimado DECIMAL(15, 2),
+    cnpj_fornecedor CHAR(14),
+    situacao_item VARCHAR(40),
+    descricao_item VARCHAR(1000),
 
     CONSTRAINT fk_compra
     FOREIGN KEY (id_compra) 
@@ -39,17 +41,20 @@ CREATE TABLE IF NOT EXISTS ItemLicitacao(
     ON DELETE RESTRICT,
 
     CONSTRAINT domain_quantidade
-    CHECK (quantidade > 0),
+    CHECK (quantidade >= 0),
 
     CONSTRAINT domain_valor_est
-    CHECK (valor_estimado > 0),
+    CHECK (valor_estimado >= 0),
 
     CONSTRAINT domain_numero_item
     CHECK (numero_item_licitacao >= 0),
 
+    CONSTRAINT domain_situacao_item
+    CHECK (situacao_item in ('HOMOLOGADO', 'DIRETO / CANCELADO / DESERTO', 'SEM VENCEDOR (ESTIMADO)')),
+
     CONSTRAINT fk_fornecedor 
-    FOREIGN KEY (id_fornecedor)
-    REFERENCES Fornecedor(id_fornecedor)
+    FOREIGN KEY (cnpj_fornecedor)
+    REFERENCES Fornecedor(cnpj)
     ON UPDATE CASCADE
     ON DELETE RESTRICT
 );
