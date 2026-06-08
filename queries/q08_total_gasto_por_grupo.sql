@@ -1,32 +1,15 @@
 -- total gasto por grupo
 
 WITH ClasseGrupo AS (
-    SELECT C.codigo_classe, G.codigo_grupo, G.nome_grupo
+    SELECT C.codigo_classe, G.codigo_grupo, G.nome_grupo, G.tipo_item
     FROM Classe as C
     INNER JOIN Grupo AS G ON C.codigo_grupo = G.codigo_grupo
-),
-MaterialGrupo AS (
-    SELECT M.codigo_item, CG.codigo_grupo, CG.nome_grupo, 'Material' as tipo
-    FROM Material AS M
-    INNER JOIN ClasseGrupo AS CG ON M.codigo_classe = CG.codigo_classe
-),
-ServicoGrupo AS (
-    SELECT S.codigo_servico, CG.codigo_grupo, CG.nome_grupo, 'Servico' as tipo
-    FROM Servico AS S
-    INNER JOIN ClasseGrupo AS CG ON S.codigo_classe = CG.codigo_classe 
-),
-TotalGastoMaterial AS (
-    SELECT codigo_grupo, nome_grupo, SUM(COALESCE(valor_estimado, 0)) AS total_gasto, tipo
-    FROM ItemLicitacao AS IL
-    INNER JOIN MaterialGrupo AS MG ON IL.codigo_item_material = MG.codigo_item
-    GROUP BY codigo_grupo, nome_grupo, tipo
-),
-TotalGastoServico AS (
-    SELECT codigo_grupo, nome_grupo, SUM(COALESCE(valor_estimado, 0)) AS total_gasto, tipo
-    FROM ItemLicitacao AS IL
-    INNER JOIN ServicoGrupo AS SG ON IL.codigo_item_servico = SG.codigo_servico
-    GROUP BY codigo_grupo, nome_grupo, tipo
 )
-SELECT * FROM TotalGastoMaterial
-UNION SELECT * FROM TotalGastoServico
-ORDER BY total_gasto DESC;
+SELECT CG.codigo_grupo, CG.nome_grupo, COALESCE(SUM(I.valor_estimado), 0) as total, CG.tipo_item
+FROM ItemLicitacao AS I
+LEFT JOIN Material AS M ON I.codigo_item_material = M.codigo_item
+LEFT JOIN Servico AS S ON I.codigo_item_servico = S.codigo_servico
+INNER JOIN ClasseGrupo CG ON (I.codigo_item_material IS NOT NULL AND M.codigo_classe = CG.codigo_classe) OR
+                                 (I.codigo_item_servico IS NOT NULL AND S.codigo_classe = CG.codigo_classe)
+GROUP BY CG.codigo_grupo, CG.nome_grupo, CG.tipo_item
+ORDER BY total DESC;
