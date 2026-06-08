@@ -346,6 +346,69 @@ def populate_provider_uasg(cur, conn):
     print("FornecedorUasg table populated with success")
 
 
+def create_idx(cur, conn):
+    print("Creating Indexes for tables.")
+
+    query_idx_item_licitacao = """
+        CREATE INDEX IF NOT EXISTS
+            idx_item_licitacao_id_compra
+            ON ItemLicitacao(id_compra);
+
+        CREATE INDEX IF NOT EXISTS
+            idx_item_licitacao_material
+            ON ItemLicitacao(codigo_item_material)
+            WHERE codigo_item_material IS NOT NULL;
+
+        CREATE INDEX IF NOT EXISTS
+            idx_item_licitacao_servico
+            ON ItemLicitacao(codigo_item_servico)
+            WHERE codigo_item_servico IS NOT NULL;
+
+        CREATE INDEX IF NOT EXISTS
+            idx_item_licitacao_fornecedor
+            ON ItemLicitacao(cnpj_fornecedor)
+            WHERE cnpj_fornecedor IS NOT NULL;
+
+        CREATE INDEX IF NOT EXISTS
+            idx_item_licitacao_uasg
+            ON ItemLicitacao(uasg);
+        """
+    cur.execute(query_idx_item_licitacao)
+    cur.execute("ANALYZE ItemLicitacao;")
+
+    query_idx_material = """
+        CREATE INDEX IF NOT EXISTS
+            idx_material_classe ON Material(codigo_classe);
+    """
+
+    cur.execute(query_idx_material)
+    cur.execute("ANALYZE Material;")
+
+    query_idx_servico = """
+        CREATE INDEX IF NOT EXISTS
+            idx_servico_classe ON Servico(codigo_classe);
+    """
+
+    cur.execute(query_idx_servico)
+    cur.execute("ANALYZE Servico;")
+
+    query_idx_classe = """
+        CREATE INDEX IF NOT EXISTS
+            idx_classe_grupo ON Classe(codigo_grupo);
+    """
+
+    cur.execute(query_idx_classe)
+    cur.execute("ANALYZE Classe;")
+
+    query_idx_licitacao = """
+        CREATE INDEX IF NOT EXISTS
+            idx_licitacao_codigo_municipio ON Licitacao(codigo_municipio);
+    """
+
+    cur.execute(query_idx_licitacao)
+    cur.execute("ANALYZE Licitacao;")
+
+
 def pipeline_injection(data_base: str, user: str, password: str):
     print(f"Connecting to DataBase ({data_base}) Postgres. User: {user}")
     config = (DB_CONFIG.replace("<data_base>", data_base)
@@ -368,6 +431,7 @@ def pipeline_injection(data_base: str, user: str, password: str):
         inject_bidding(cur, conn)
         inject_item(cur, conn)
         populate_provider_uasg(cur, conn)
+        create_idx(cur, conn)
     except Exception as e:
         conn.rollback()
         print(f"Critical Error. {e}")
