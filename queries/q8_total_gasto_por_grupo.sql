@@ -22,7 +22,7 @@ TotalGastoMaterial AS (
     GROUP BY codigo_grupo, nome_grupo
 ),
 TotalGastoServico AS (
-    SELECT codigo_grupo, nome_grupo, SUM(valor_estimado) AS total_gasto
+    SELECT codigo_grupo, nome_grupo, SUM(COALESCE(valor_estimado, 0)) AS total_gasto
     FROM ItemLicitacao AS IL
     INNER JOIN ServicoGrupo AS SG ON IL.codigo_item_servico = SG.codigo_servico
     GROUP BY codigo_grupo, nome_grupo
