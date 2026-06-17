@@ -10,10 +10,9 @@ WITH PrecoMercado AS (
     GROUP BY codigo_item_material, codigo_item_servico
     HAVING AVG(valor_estimado / NULLIF(quantidade, 0)) > 0
 )
-SELECT I.id_compra,
-       I.id_compra_item,
+SELECT I.id_compra, I.id_compra_item,
        COALESCE(M.nome_material, S.nome_servico) as nome_item,
-       (I.valor_estimado / I.quantidade) AS preco_unitario_praticado,
+       ROUND((I.valor_estimado / I.quantidade), 2) AS preco_unitario_praticado,
        ROUND(PM.preco_medio, 2) AS preco_medio_mercado,
        ROUND((I.valor_estimado / I.quantidade) / PM.preco_medio, 2) AS vezes_acima
 FROM ItemLicitacao AS I
