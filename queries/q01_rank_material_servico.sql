@@ -15,6 +15,6 @@ LEFT JOIN Material AS M ON I.codigo_item_material = M.codigo_item
 LEFT JOIN Servico AS S ON I.codigo_item_servico = S.codigo_servico
 WHERE I.situacao_item = 'HOMOLOGADO'
 GROUP BY nome_item, I.codigo_item_material, I.codigo_item_servico
-ORDER BY vezes_comprado DESC
+ORDER BY vezes_comprado DESC, valor_total_estimado DESC
 LIMIT 15;
     

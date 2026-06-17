@@ -8,7 +8,7 @@ WITH TodosMateriais AS (
     FROM ItemLicitacao AS IL
 ),
 TodosMateriaisClasses AS (
-    SELECT AM.*, C.nome_classe, C.codigo_classe 
+    SELECT TM.*, C.nome_classe, C.codigo_classe 
     FROM Material AS M
     INNER JOIN TodosMateriais AS TM ON M.codigo_item = TM.codigo_item_material
     INNER JOIN Classe AS C ON C.codigo_classe = M.codigo_classe
